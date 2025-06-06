@@ -1,3 +1,4 @@
+from colorama import Fore
 import os
 import json
 import csv
@@ -8,6 +9,9 @@ def limpiarconsola():
         os.system('cls')
     else:
         os.system('clear')
+
+def escribirConsola(texto: str, color = Fore.WHITE):
+    print(f"{color}{texto}")
 
 def ENTERContinuar(mensaje: str = "\nPresione ENTER para continuar:\n -> "):
     input(mensaje)
@@ -29,12 +33,13 @@ def EscogerNumeros():
 '''Hay que tener en cuaenta de que un usuario puede escribir los mismos numeros que otro, por ello hay que verificar que no se repitan'''
 
 def verificarNum():
-    '''Verifica si los numeros ingresados por el usuario no estan repetidos con ningun otro boleto'''
+    '''Verifica si los numeros ingresados por el usuario no estan repetidos con ningun otro boleto ya comprado,
+    y muestra cuales de lso numeros estan en ese otro boleto'''
     pass
 
 def VerHistorial():
     '''Ve el historial de las compras del usuario, con datos como el numero de sus boletos comprados
-    y cuales de esos numeros eran iguales al numero ganador'''
+    y cuales de esos numeros eran iguales al numero ganador marcados con color verde'''
     pass
 
 def VerificarGanador():
@@ -70,7 +75,7 @@ menu = """
 
 while True:
     limpiarconsola()
-    print(menu)
+    escribirConsola(menu, Fore.GREEN)
     opcion = input("Digite la opcion que necesite:\n -> ")
     if opcion == "1":
         ENTERContinuar()
