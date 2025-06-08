@@ -1,5 +1,15 @@
-import json
+from colorama import Fore
 import os
+import json
+import csv
+import random
+from tabulate import tabulate
+
+def MostrarEstadisticas(estadisticas):
+    tabla = []
+    for aciertos, cantidad in estadisticas.items():
+        tabla.append([f"{aciertos} aciertos", cantidad])
+    print(tabulate(tabla, headers=["Aciertos", "Veces"], tablefmt="grid"))
 
 def limpiarconsola():
     if os.name == 'nt':
@@ -7,117 +17,83 @@ def limpiarconsola():
     else:
         os.system('clear')
 
-def ENTERContinuar(mensaje: str = "\nPresione ENTER para continuar: \n -> "):
+def escribirConsola(texto: str, color = Fore.WHITE):
+    print(f"{color}{texto}")
+
+def ENTERContinuar(mensaje: str = "\nPresione ENTER para continuar:\n -> "):
     input(mensaje)
 
-#DIC = {"ID": 1, "Nombre": "Adrian Bayona", "Telefono": "+57 3224732154", "Email": "adrianbayona325@gmail.com"}
+def CompraBoletos():
+    boletos = []
+    cantidad = int(input("¿Cuántos boletos desea comprar?: "))
+    for _ in range(cantidad):
+        print(f"\nBoleto {len(boletos) + 1}:")
+        boletos.append(EscogerNumeros())
+    return boletos
+    '''Ingresa los datos del comprador como ID, Nombre y Cantidad de dinero ingresado, 
+    si el dinero es suficiente para un boleto lo compra.
+    Aun asi se le pide la cantidad de boletos que quiere comprar y verifica si cumple con la cantidad de dinero requerida'''
 
-def escribirArchivoJSON(path: str, mode= 'w'):
-    try:
-        ent = int(input("Ingrese la cantidad de usuarios a registrar: \n -> "))
-        usuarios = []
-        for i in range(ent):
-            print("")
-            Id = input(f"Ingrese el ID del usuario {i + 1}: ")
-            Nombre = input(f"Ingrese el Nombre del usuario {i + 1}: ")
-            Telefono = input(f"Ingrese el Telefono del usuario {i + 1}: ")
-            Email = input(f"Ingrese el Email del usuario {i + 1}: ")
-            usuarios.append({"ID": Id, "Nombre": Nombre, "Telefono": Telefono, "Email": Email})
 
-        with open(path, mode) as file:
-            campos = ["ID", "Nombre", "Telefono", "Email"]
-            json.dump(usuarios, file, indent=4)
-
-    except FileNotFoundError:
-        print("Lo sentimos, el archivo no existe")
-
-''' def agregarUsuario(path: str, mode= 'w'):
+def EscogerNumeros():
+    numeros = []
+    while len(numeros) < 6:
         try:
-            with open(path, mode) as file:
-                json.dump(DIC, file, indent=4)
-        except FileNotFoundError:
-            print("Lo sentimos, el archivo no existe")'''
-
-def leerArchivoJSON(path: str, mode = 'r') -> list:
-    try:
-        with open(path, mode) as file:
-            datos = json.load(file)
-            print("\n=== TODOS LOS USUARIOS ===")
-            for usuario in datos:
-                print(f"ID: {usuario['ID']}, Nombre: {usuario['Nombre']}, Telefono: {usuario['Telefono']}, Email: {usuario['Email']}")
-            return datos
-    except FileNotFoundError:
-        print("Lo sentimos, el archivo no existe")
-
-def editarArchivoJSON(path: str, IDBusqueda: str, NewTelefono: str, NewEmail: str):
-    try:
-        print("\n=== TODOS LOS USUARIOS ===")
-        with open(path, mode='r') as file:
-            datos = json.load(file)
-            for usuario in datos:
-                print(f"ID: {usuario['ID']}, Nombre: {usuario['Nombre']}, Telefono: {usuario['Telefono']}, Email: {usuario['Email']}")
-        
-        UsuarioModificado = None
-        for usuario in datos:
-            if usuario['ID'] == IDBusqueda:
-                usuario['Telefono'] = NewTelefono
-                usuario['Email'] = NewEmail
-                UsuarioModificado = usuario
-                break
-        
-        if not UsuarioModificado:
-            print(f'No se ha encontrado un usuario con ID: {IDBusqueda}')
-            return False
-        
-        with open(path, mode='w') as file:
-            json.dump(datos, file, indent=4)
-
-        print("\n=== USUARIO EDITADO CON ÉXITO ===")
-        print(f"ID: {UsuarioModificado['ID']}")
-        print(f"Nombre: {UsuarioModificado['Nombre']}")
-        print(f"Teléfono (actualizado): {UsuarioModificado['Telefono']}")
-        print(f"Email (actualizado): {UsuarioModificado['Email']}")
-        
-        return True
-    
-    except FileNotFoundError:
-        print("Lo sentimos, el archivo no existe")
-
-def eliminarUsuarioJSON(path: str, IDBusqueda: str):
-    try:
-        print("\n=== TODOS LOS USUARIOS ===")
-        with open(path, mode='r') as file:
-            datos = json.load(file)
-            for usuario in datos:
-                print(f"ID: {usuario['ID']}, Nombre: {usuario['Nombre']}, Telefono: {usuario['Telefono']}, Email: {usuario['Email']}")
-
-        # Buscar y eliminar el usuario
-        UsuarioEliminado = None
-        nuevos_datos = []
-        for usuario in datos:
-            if usuario['ID'] == IDBusqueda:
-                UsuarioEliminado = usuario
+            num = int(input(f"Ingrese el número {len(numeros) + 1} (1-49): "))
+            if num < 1 or num > 49:
+                print("El número debe estar entre 1 y 49.")
+            elif num in numeros:
+                print("Número repetido. Intente de nuevo.")
             else:
-                nuevos_datos.append(usuario)
-        
-        if not UsuarioEliminado:
-            print(f'\nNo se ha encontrado un usuario con ID: {IDBusqueda}')
-            return False
-        
-        # Guardar los cambios (sin el usuario eliminado)
-        with open(path, mode='w') as file:
-            json.dump(nuevos_datos, file, indent=4)
+                numeros.append(num)
+        except ValueError:
+            print("Ingrese un número válido.")
+    return numeros
+'''Hay que tener en cuaenta de que un usuario puede escribir los mismos numeros que otro, 
+por ello hay que verificar que no se repitan'''
 
-        # Mostrar confirmación
-        print("\n=== USUARIO ELIMINADO CON ÉXITO ===")
-        print(f"ID: {UsuarioEliminado['ID']}")
-        print(f"Nombre: {UsuarioEliminado['Nombre']}")
-        print(f"Teléfono: {UsuarioEliminado['Telefono']}")
-        print(f"Email: {UsuarioEliminado['Email']}")
-        
-        return True
-    except FileNotFoundError:
-        print("Lo sentimos, el archivo no existe")
+#def verificarNum():
+#    '''Verifica si los numeros ingresados por el usuario no estan repetidos con ningun otro boleto ya comprado,
+#    y muestra cuales de los numeros estan en ese otro boleto'''
+#    pass
+
+def GuardarHistorial(boleto, ganadores, resultado):
+    historial = {
+        "boleto": boleto,
+        "ganadores": ganadores,
+        "aciertos": resultado[0],
+        "premio": resultado[1]
+    }
+    with open("historial.json", "a") as file:
+        json.dump(historial, file)
+        file.write("\n")    
+    '''Ve el historial de las compras del usuario, con datos como el numero de sus boletos comprados
+    y cuales de esos numeros eran iguales al numero ganador marcados con color verde'''
+
+
+def GenerarNumerosGanadores():
+    return random.sample(range(1, 50), 6)    
+'''Verifica la cantidad de numeros que sean iguales al numero ganador y
+    da el premio segun la cantidad de numeros que concuerdan, guardando el analisis en el historial del usuario'''
+
+def VerificarGanador(boleto, ganadores):
+    aciertos = len(set(boleto) & set(ganadores))
+    premios = {
+        3: "Premio pequeño",
+        4: "Premio mediano",
+        5: "Premio grande",
+        6: "Premio mayor"
+    }
+    return aciertos, premios.get(aciertos, "No ganó")
+
+def SimularSorteos(cantidad):
+    estadisticas = {i: 0 for i in range(7)}  # Contador de aciertos (0-6)
+    for _ in range(cantidad):
+        ganadores = GenerarNumerosGanadores()
+        boleto = random.sample(range(1, 50), 6)
+        aciertos = len(set(boleto) & set(ganadores))
+        estadisticas[aciertos] += 1
+    return estadisticas
 
 menu = """
 --------------------------------------------------------
@@ -137,29 +113,26 @@ menu = """
 
 while True:
     limpiarconsola()
-    print(menu)
-    opcion = input("Seleccionem una opcion del Menu:\n -> ")
+    escribirConsola(menu, Fore.GREEN)
+    opcion = input("Digite la opción que necesite:\n -> ")
     if opcion == "1":
-        escribirArchivoJSON('contacts.json')
-        #agregarUsuario('contacts.json')
+        boletos = CompraBoletos()
         ENTERContinuar()
     elif opcion == "2":
-        leerArchivoJSON('contacts.json')
+        ganadores = GenerarNumerosGanadores()
+        print(f"Números ganadores: {ganadores}")
+        for boleto in boletos:
+            resultado = VerificarGanador(boleto, ganadores)
+            print(f"Boleto {boleto}: {resultado[0]} aciertos - {resultado[1]}")
+            GuardarHistorial(boleto, ganadores, resultado)
         ENTERContinuar()
     elif opcion == "3":
-        IDBusqueda = input("Ingrese el ID del usuario que desea buscar: \n -> ")
-        NewTelefono = input("Ingrese el nuevo Número de telefono del usuario: \n -> ")
-        NewEmail = input("Ingrese el nuevo Email de telefono del usuario: \n -> ")
-        editarArchivoJSON('contacts.json', IDBusqueda, NewTelefono, NewEmail)
+        print("Historial de sorteos:")
+        # Código para leer y mostrar el archivo JSON/CSV
         ENTERContinuar()
     elif opcion == "4":
-        IDBusqueda = input("Ingrese el ID del usuario que desea eliminar: \n -> ")
-        eliminarUsuarioJSON('contacts.json', IDBusqueda)
-        ENTERContinuar()
-    elif opcion == "5":
-        print("Saliendo del programa....")
-        print("Has salido del programa.")
+        print("Saliendo del programa...")
         break
     else:
-        print("Por favor, seleccione una opcion correcta")
+        print("\n¡SELECCIONE UNA OPCIÓN CORRECTA!")
         ENTERContinuar()
