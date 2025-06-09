@@ -126,7 +126,7 @@ while True:
         ENTERContinuar()
     elif opcion == "3":
         ganadores = GenerarNumerosGanadores()
-        print(Fore.GREEN + Style.BRIGHT + f"Números ganadores: {ganadores}")
+        print(Fore.LIGHTWHITE_EX + Style.BRIGHT + f"Boleto {boleto}: {resultado[0]} aciertos - {resultado[1]}")
         for boleto in boletos:
             resultado = VerificarGanador(boleto, ganadores)
             print(f"Boleto {boleto}: {resultado[0]} aciertos - {resultado[1]}")
