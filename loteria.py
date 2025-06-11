@@ -89,7 +89,7 @@ def Compraboletos():
     Precioboleto = 5
     nombre = input("Ingrese su nombre: ")
     id = input("Ingrese su id: ")
-    Dinero = float(input("Ingrese su dinero disponible: $"))
+    Dinero = float(input("Ingrese su dinero disponible (Cada boleto cuesta $5): $"))
 
     CantidadMAX = int(Dinero // Precioboleto)
     if CantidadMAX == 0:
